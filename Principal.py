@@ -15,7 +15,7 @@ def descompactador_jogos(): #Esta funcionando perfeitamente! 30\11\2022 Rafael!
         for linha in banco_de_dados.readlines(): #Percorre o Banco de Dados.
             linha = linha.split('(-)') #Separa os dados do Banco de Dados.
             linha[2] = linha[2][0] #Retira o /n do final da linha
-            dicionario = {'equipe1':[linha][0],'equipe2':[linha][1],'placar1':[linha][2],'placar2':[linha][3],'faltas1':[linha][4],'faltas2':[linha][5]} #Cria um dicionario com os dados do Banco de Dados.
+            dicionario = {'equipe1':linha[0],'equipe2':linha[1],'placar1':linha[2],'placar2':linha[3],'faltas1':linha[4],'faltas2':linha[5]} #Cria um dicionario com os dados do Banco de Dados.
             lista.append(dicionario) #Adiciona o dicionario a lista.
     return lista #Retorna a lista de dicionarios.
 
