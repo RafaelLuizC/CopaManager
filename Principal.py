@@ -1,3 +1,12 @@
+#"Produzido por Kaian Vinicius (@Kaian32) e Rafael Luiz (@RafaelLuizC)"
+
+import boot
+from os import system #fazer certo em linux depois
+import os #importando o OS como um todo logo
+import time #importando o tempo
+system('cls') #limpando comandos anteriores
+print("Olá, seja bem vindo ao Copa Manager!") #mensagem de boas vindas
+
 #Essa função serve para retirar os arquivos de texto, e transformar em uma lista.
 def descompactador_equipes(): #Esta funcionando perfeitamente! 25\11\2022 Rafael!
     lista = []
@@ -73,6 +82,9 @@ def separador(lista):
     return lista_separada #Retorna a lista1.
 
 def janelaselecoes(selecao): #Esta funcionando perfeitamente! 01\12\2022 Rafael!
+    system("cls")
+    print(selecao)
+    print()
     valores = [[],[],[],[],[],[],[]] #Valores[0] = Gols Marcados, Valores[1] = Gols Sofridos, Valores[2] = Faltas Cometidas, Valores[3] = Faltas Sofridas
     #Valores[4] = Vitorias S2 , Valores[5] = Derrotas , Valores[6] = Empates
     for item in descompactador_jogos(): #Percorre a lista de dicionarios.
@@ -117,26 +129,33 @@ def janelaselecoes(selecao): #Esta funcionando perfeitamente! 01\12\2022 Rafael!
     else:
         for item in valores[5]:
             print (item)            
-    acao = input('Pressione enter para voltar ao menu')
+    acao = input('\nPressione qualquer tecla para voltar ao menu\n')
+    system("cls")
 
 def janela():
+    system("cls")
     lista1 = separador(descompactador_equipes())
     x = 0
     while True:
         for i in range(len(lista1[x])):
             print (f'{lista1[x][i]["equipe"]} - {lista1[x][i]["abreviacao"]} - {lista1[x][i]["grupo"]}')
-        print (f'Voce esta na Pagina {x} de {len(lista1)-1}')
-        opcao = input ("Digite o Valor Desejado: ").upper()
+        print (f'Voce esta na página {x} de {len(lista1)-1}')
+        print("\nDigite o nome da seleção que você deseja saber mais informações.")
+        print("\nDigite SAIR para retornar\nDigite AVANÇAR para ir para a próxima página\nDigite VOLTAR para ir para a página anterior\n")
+        opcao = input ("Digite o valor desejado: ").upper()
         if opcao == "SAIR":
+            system("cls")
             break
         elif opcao == "VOLTAR":
             x = x - 1
             if x == -1:
                 x = 0
-        elif opcao == "AVANCAR":
+            system("cls")
+        elif opcao == "AVANÇAR":
             x = x + 1
             if x == len(lista1):
                 x = 0
+            system("cls")
         elif opcao == (lista1[x][0]["equipe"]):
             janelaselecoes(lista1[x][0]["equipe"])
         elif opcao == (lista1[x][1]["equipe"]):
@@ -147,21 +166,27 @@ def janela():
             janelaselecoes(lista1[x][3]["equipe"])
         elif opcao == (lista1[x][4]["equipe"]):
             janelaselecoes(lista1[x][4]["equipe"])
+        else:
+            system("cls")
+            print("Opção inválida! Tente novamente!")
+            time.sleep(1)
+            system("cls")
+            return
 
 def validagrupo(): #Esta Funcionando Perfeitamente! 25\11\2022 Rafael!
     while True:  #Loop infinito.
-        grupo = input ("Digite o Grupo da Seleção: ").upper() #Pede para o usuário digitar o grupo da seleção.
+        grupo = input ("Digite o grupo da seleção: ").upper() #Pede para o usuário digitar o grupo da seleção.
         if len(grupo) != 1: 
-            print ("O Grupo do Time deve ter apenas um Caracter.") #Verifica se o grupo possui apenas um caracter.
+            print ("O Grupo do time deve ter apenas um caracter.") #Verifica se o grupo possui apenas um caracter.
             continue 
         if grupo in 'ABCDEFGH': #Verifica se o grupo é valido. 
             if contador(grupo) == True: #Verifica se o grupo já possui 4 seleções. 
                 return grupo
             elif contador(grupo) == False: 
-                print ("Esse Grupo já esta cheio, tente outro.") #Caso o grupo já esteja cheio, ele pergunta se o usuário quer cadastrar outro grupo.
+                print ("Esse grupo já esta cheio! Tente outro.") #Caso o grupo já esteja cheio, ele pergunta se o usuário quer cadastrar outro grupo.
                 continue
         else:
-            print ("Grupo Invalido, tente novamente.") 
+            print ("Grupo invalido! Tente novamente.") 
             continue
                 
 def contador(pesquisa):
@@ -175,12 +200,12 @@ def contador(pesquisa):
             
 def validaabreviacao(): #Esta Funcionando Perfeitamente! 01\12\2022 Rafael! \\\ Valida se a Abreviação esta preenchida corretamente.
     while True: #Loop infinito.
-        abrev = input ("Digite a Abreviação da Seleção: ").upper() #Pede para o usuário digitar a abreviação da seleção.
+        abrev = input ("Digite a abreviação da seleção: ").upper() #Pede para o usuário digitar a abreviação da seleção.
         if len(abrev) != 3: # Verifica se a abreviação possui 3 caracteres
-            print ("Abreviação Invalida, tente novamente.")
+            print ("Abreviação invalida! Tente novamente.")
         else:
             if subabreviacao(abrev) == False: #Verifica se a abreviação já existe no Banco de Dados.
-                print ("Essa Abreviação já esta cadastrada, tente outra.")
+                print ("Essa abreviação já esta cadastrada! Tente outra.")
                 continue #Caso a abreviação já exista, ele volta para o usuário cadastrar outra.
             if subabreviacao(abrev) == True:
                 return abrev #Retorna a abreviação caso ela não exista no Banco de Dados.
@@ -193,18 +218,22 @@ def subabreviacao(abreviacao): #Essa função testa os valores digitados no cada
 
 def validaselecao(): #Essa função serve para Validar os dados informados para os nomes dos times.
     while True:
-        selecao = input ("Digite o Nome da Seleção: ").upper()
+        system("cls")
+        selecao = input ("Digite o nome da seleção: ").upper()
         if len(selecao) < 3: #Verifica se o nome da seleção possui algum caracter.
-            print ("O Nome de um Pais precisa ter ao menos 3 Caracteres.")
+            system("cls")
+            print ("Mínimo de 3 caracteres!")
+            time.sleep(1)
+            system("cls")
             continue
         elif subsubvalidaSelecao(selecao) == False:
-            print ("O Nome de um Pais não pode conter números, ou caracteres especiais.")
+            print ("O nome de um pais não pode conter números ou caracteres especiais!")
             continue
         else:
             if subvalidaselecao(selecao) == True:
                 return selecao
             elif subvalidaselecao(selecao) == False:
-                print ("Essa Seleção já esta cadastrada, tente outra.")
+                print ("Essa seleção já esta cadastrada! Tente outra.")
                 continue
 
 def subvalidaselecao(selecao): #Esta Funcionando Perfeitamente! 25\11\2022 Rafael!
@@ -231,10 +260,10 @@ def validaplacar(): #Esta Funcionando Perfeitamente! 30\11\2022 Rafael!
     while True:
         placar = input ("Digite o Placar: ") #Pede para o usuário digitar o placar.
         if placar.isnumeric() == False: #Verifica se o placar é um valor numérico.
-            print ("Placar Invalido, tente novamente.")
+            print ("Placar inválido! Tente novamente.")
             continue
         if len(placar) > 2: #Verifica se o placar possui mais de 2 caracteres.
-            print ("Valor Invalido, Tente Novamente.")
+            print ("Valor inválido! Tente Novamente.")
             continue #Caso o placar possua mais de 2 caracteres, ele volta para o usuário digitar novamente.
         else:
             return placar #Retorna o placar caso ele seja um valor numérico e possua no máximo 2 caracteres.
@@ -243,28 +272,28 @@ def cadastrojogos(): #Esta Funcionando Perfeitamente! 30\11\2022 Rafael!
     pais = subcadastrojogos() #Chama a função subCadastroJogos para validar o nome da seleção.
     pais2 = subcadastrojogos()
     if pais['grupo'] != pais2['grupo']: #Verifica se as seleções estão no mesmo grupo.
-        print ("As Seleções não estão no mesmo Grupo, continuar mesmo assim?") #Caso as seleções não estejam no mesmo grupo, ele pergunta se o usuário deseja continuar.
+        print ("As seleções não estão no mesmo grupo, continuar mesmo assim?") #Caso as seleções não estejam no mesmo grupo, ele pergunta se o usuário deseja continuar.
         opcao = input ("Digite S para Sim e N para Não: ").upper() 
         match opcao: 
             case 'S':
                 pass
             case 'N':
-                return print ("Cadastro Cancelado.")
+                return print ("Cadastro cancelado.")
     placar = validaplacar() 
     placar2 = validaplacar()
     faltas = validaplacar()
     faltas2 = validaplacar()
     with open ("jogos.txt","a+",encoding="utf-8") as jogos: #Abre o Banco de Dados.
         jogos.write(f"{pais['equipe']}(-){pais2['equipe']}(-){placar}(-){placar2}(-){faltas}(-){faltas2}\n") #Escreve no Banco de Dados.
-        return print ("Jogo Cadastrado com Sucesso!") #Retorna uma mensagem de sucesso.
+        return print ("Jogo cadastrado com sucesso!") #Retorna uma mensagem de sucesso.
 
 def subcadastrojogos(): 
     while True: #Loop para validar o nome da seleção.
-        busca = input ("Digite o Nome da Seleção: ").upper() #Pede o nome da seleção.
+        busca = input ("Digite o nome da seleção: ").upper() #Pede o nome da seleção.
         for item in descompactador_equipes(): #Percorre o Banco de Dados.
             if item['equipe'] == busca: #Verifica se o nome da seleção existe no Banco de Dados.
                 return item #Retorna o nome da seleção.
-        print ("Seleção não cadastrada, Gostaria de tentar novamente, ou cadastrar outra?") 
+        print ("Seleção não cadastrada, gostaria de tentar novamente ou cadastrar outra?") 
         opcao = input ("Digite S para Sim e N para Não: ").upper() #Pergunta se o usuário quer tentar novamente ou cadastrar outra seleção.
         match opcao:
             case 'S':
@@ -274,20 +303,29 @@ def subcadastrojogos():
 
 def menu():
     while True:
-        print ("Digite 1 para sair do Programa.")
-        print ("Digite 2 para cadastrar uma nova Equipe.")
-        print ("Digite 3 para cadastrar um novo Jogo")
-        print ("Digite 4 para ver o total de jogos salvos.")
-        print ("Digite 5 para ver o numero total de equipes.")
+        print("Selecione uma das opções abaixo:")
+        print("1) SAIR\nFecha o aplicativo.")
+        print("2) Nova Equipe\nAdiciona uma nova equipe ao dados.")
+        print("3) Novo Jogo\nAdiciona um novo jogo aos dados.")
+        print("4) Todos os jogos\nAbre uma tela detalhada com todos os jogos gravados.")
+        print("5) Todas as equipes\nAbre uma tela detalhada com todos os jogos gravados.")
         opção = input("Digite a opção desejada: ")
         if len(opção) <= 0 or opção.isnumeric() == False:
-            print ("Opção Invalida, tente novamente.")
+            system("cls")
+            print("Esta opção não é válida! Tente novamente!")
+            time.sleep(1)
+            system("cls")
             continue
         else:
             opção = int(opção)
             match opção:
                 case 1:
+                    system("cls")
                     print ("Obrigado por usar o Programa.")
+                    time.sleep(0.5)
+                    print("Produzido por Kaian Vinicius (@Kaian32) e Rafael Luiz (@RafaelLuizC)")
+                    time.sleep(1)
+                    system("cls")
                     break
                 case 2:
                     cadastroequipes()
