@@ -81,28 +81,19 @@ def lista_grupos(): #Esta funcionando perfeitamente! 30\11\2022 Rafael!
     return a,b,c,d,e,f,g,h #Retorna as listas A,B,C,D,E,F,G e H.
 
 def excluir_equipes(equipe): #Esta funcionando perfeitamente! 25\11\2022 Rafael!
-    lista_equipes = []
-    with open ("equipes.txt","r",encoding="utf-8") as banco_de_dados: #Abre o Banco de Dados.
-        for linha in banco_de_dados.readlines(): #Percorre o Banco de Dados.
-            linha = linha.split('(-)') #Separa os dados do Banco de Dados.
-            linha[2] = linha[2][0] #Retira o /n do final da linha
-            if linha[0] == equipe:
-                continue
-            else:
-                lista_equipes.append(linha)
+    lista_equipes = descompactador_equipes(1) #Chama a função descompactador_equipes.
     with open ("equipes.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
         for item in lista_equipes:
-            jogos.write(f"{item[0]}(-){item[1]}(-){item[2]}(-)\n") #Escreve no Banco de Dados.
+            if item['equipe'] != equipe: #Verifica se o nome da equipe é diferente do nome da equipe que o usuario deseja excluir.
+                jogos.write(f"{item[0]}(-){item[1]}(-){item[2]}(-)\n") #Escreve no Banco de Dados.
     with open ("jogos.txt","r",encoding="utf-8") as banco_de_dados: #Abre o Banco de Dados.
-        lista_jogos = []
-        for linha in banco_de_dados.readlines(): #Percorre o Banco de Dados.
-            linha = linha.split('(-)') #Separa os dados do Banco de Dados.
-            linha[5] = linha[5][0] #Retira o /n do final da linha
-            if linha[0] == equipe:
-                linha[0] = "EQUIPE EXCLUIDA"
-            elif linha[1] == equipe:
-                linha[1] = "EQUIPE EXCLUIDA"
-            lista_jogos.append(linha)
+        lista_jogos = descompactador_jogos(2)
+        for item in lista_jogos:
+            if item[0] == equipe:
+                item[0] = "EQUIPE EXCLUIDA"
+            elif item[1] == equipe:
+                item[1] = "EQUIPE EXCLUIDA"
+            lista_jogos.append(item)
     with open ("jogos.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
         for item in lista_jogos:
             if item[0] == "EQUIPE EXCLUIDA" and item[1] == "EQUIPE EXCLUIDA":
@@ -110,6 +101,113 @@ def excluir_equipes(equipe): #Esta funcionando perfeitamente! 25\11\2022 Rafael!
             jogos.write(f"{item[0]}(-){item[1]}(-){item[2]}(-){item[3]}(-){item[4]}(-){item[5]}(-)\n")
     return (print("Equipe excluida com sucesso!"))
 
+def excluir_jogos(jogo_excluir):
+    lista = descompactador_jogos(2)
+    lista2 = []
+    for item in lista:
+        if item['equipe1'] == jogo_excluir['equipe1'] and item['equipe2'] == jogo_excluir['equipe2']:
+            pass    
+        else:
+            lista2.append(item)
+    with open ("jogos.txt","w",encoding="utf-8") as banco_de_dados:
+        for item in lista2:
+            banco_de_dados.write(f'{item["equipe1"]}(-){item["equipe2"]}(-){item["placar1"]}(-){item["placar2"]}(-){item["faltas1"]}(-){item["faltas2"]}\n')
+
+def editar_jogos(jogo_editar): 
+    lista = descompactador_jogos(2) # Recebe uma lista para comparação.
+    lista2 = [] #Cria uma lista que será editada.
+    for item in lista: #Percorre a lista de comparação.
+        if item['equipe1'] == jogo_editar['equipe1'] and item['equipe2'] == jogo_editar['equipe2']: #Encontra a informação a ser editada.
+            print ("Digite o novo placar do jogo entre",item['equipe1'],"e",item['equipe2'])
+            placar1 = validaplacar() #Valida o placar.
+            placar2 = validaplacar() #Valida o placar.
+            print ("Digite o numero de faltas do jogo entre",item['equipe1'],"e",item['equipe2'])
+            faltas1 = validaplacar() 
+            faltas2 = validaplacar() 
+            item['placar1'] = placar1
+            item['placar2'] = placar2
+            item['faltas1'] = faltas1
+            item['faltas2'] = faltas2
+            lista2.append(item) #Adiciona o item editado a lista2.
+        else:
+            lista2.append(item) #Adiciona o item não editado a lista2.
+    with open ("jogos.txt","w",encoding="utf-8") as banco_de_dados:
+        for item in lista2:
+            banco_de_dados.write(f'{item["equipe1"]}(-){item["equipe2"]}(-){item["placar1"]}(-){item["placar2"]}(-){item["faltas1"]}(-){item["faltas2"]}\n')
+
+def janela_partida(lista):
+    os.system('cls')
+    #Vai começçar a interface que apresenta os dados da partida.
+    separador_print(3)
+    #Aqui vai ser apresentado o nome das equipes que Jogaram a partida, de um lado a Equipe 1 e do outro a Equipe 2.
+    print (f'SELEÇÕES\n'.center(80))
+    print (lista['equipe1'].center(40),lista['equipe2'].center(40))
+    print (f'GOLS MARCADOS\n'.center(80))
+    print (str(lista['placar1']).center(40),str(lista['placar2']).center(40))
+    print (f'FALTAS COMETIDAS\n'.center(80))
+    print (str(lista['faltas1']).center(40),str(lista['faltas2']).center(40))
+    print (f'VENCEDOR\n'.center(80))
+    placar = lista['equipe1'] if lista['placar1'] > lista['placar2'] else lista['equipe2']
+    print (placar.center(80))
+    separador_print(3)
+    acao = input('Pressione enter para voltar ao menu').upper()
+    match acao:
+        case "EXCLUIR":
+            print ("Tem certeza que deseja excluir a equipe? [S] Para Excluir, [N] Para Voltar ao Menu")
+            acao = input().upper()
+            if acao == "S":
+                excluir_jogos(lista)
+                janela_jogos()
+        case "EDITAR":
+            editar_jogos(lista)
+            janela_jogos()
+
+def janela_jogos():
+    ordenacao = 3
+    lista1 = separador(descompactador_jogos(3))#Por padrão deixei em 3, que representa a separação por grupo.
+    x = 0
+    mensagem = ''
+    while True:
+        os.system('cls')
+        print (f'\n{mensagem.center(80)}\n')
+        mensagem = ''
+        #Montando uma Janela para essa lista.
+        for i in range(len(lista1[x])):
+            print (f'Jogo numero {i+1+(5*x)}'.center(80))
+            print (f"{lista1[x][i]['equipe1']:>20} {lista1[x][i]['placar1']:>3} x {lista1[x][i]['placar2']:<3} {lista1[x][i]['equipe2']:<20}".center(80))
+            #Printa uma linha de acordo com o tamanho dos times.
+        separador_print(2)
+        print (f'[ORDENAR] - [SAIR] = [VOLTAR] para voltar a Pagina [AVANÇAR] para ir para a proxima Pagina'.center(80))
+        print (f'Voce esta na Pagina {x} de {len(lista1)-1}'.center(80))
+        separador_print(2)
+        opcao = input ("Digite o Valor Desejado: ").upper()
+        #Aqui verifica se a opcao escolhida é um nome presente na lista que esta sendo apresentada.
+        if opcao == "SAIR": #Sai do programa.
+            break
+        elif opcao == "VOLTAR": #Volta para a pagina anterior.
+            x = x - 1 if x > 0 else 0
+        elif opcao == "AVANCAR":
+            x = x + 1 if x < len(lista1)-1 else len(lista1)-1
+        elif opcao == "ORDENAR":
+            ordenacao -= 1
+            if ordenacao == 0:
+                ordenacao = 3
+            lista1 = separador(descompactador_jogos(ordenacao))
+        elif (opcao.isdigit()) == True:
+            opcao = int(opcao)
+            if opcao == ((x*5+1)):
+                janela_partida(lista1[x][0])
+            elif opcao == (x*5+2):
+                janela_partida(lista1[x][1])
+            elif opcao == (x*5+3):
+                janela_partida(lista1[x][2])
+            elif opcao == (x*5+4):
+                janela_partida(lista1[x][3])
+            elif opcao == (x*5+5):
+                janela_partida(lista1[x][4])
+            else:
+                mensagem = ("Opção Invalida")
+        
 def editar_equipes(equipe): #Esta funcionando perfeitamente! 25\11\2022 Rafael!
     lista_equipes = []
     while True:
@@ -265,9 +363,11 @@ def janela_jogos():
     ordenacao = 3
     lista1 = separador(descompactador_jogos(3))#Por padrão deixei em 3, que representa a separação por grupo.
     x = 0
+    mensagem = ''
     while True:
         os.system('cls')
-        separador_print(3)
+        print (f'\n{mensagem.center(80)}\n')
+        mensagem = ''
         #Montando uma Janela para essa lista.
         for i in range(len(lista1[x])):
             print (f'Jogo numero {i+1+(5*x)}'.center(80))
@@ -290,6 +390,22 @@ def janela_jogos():
             if ordenacao == 0:
                 ordenacao = 3
             lista1 = separador(descompactador_jogos(ordenacao))
+        elif (opcao.isdigit()) == True:
+            opcao = int(opcao)
+            if opcao == ((x*5+1)):
+                janela_partida(lista1[x][0])
+            elif opcao == (x*5+2):
+                janela_partida(lista1[x][1])
+            elif opcao == (x*5+3):
+                janela_partida(lista1[x][2])
+            elif opcao == (x*5+4):
+                janela_partida(lista1[x][3])
+            elif opcao == (x*5+5):
+                janela_partida(lista1[x][4])
+            else:
+                mensagem = ("Opção Invalida")
+        
+
 
 def validagrupo(): #Esta Funcionando Perfeitamente! 25\11\2022 Rafael!
     while True:  #Loop infinito.
@@ -414,6 +530,10 @@ def subcadastrojogos():
             case 'N':
                 return cadastroequipes() #Chama a função cadastroequipes para cadastrar uma nova seleção.
 
+def janela_grupos():
+    os.system('cls')
+    print (f'''GRUPO A = {lista_grupos()[0]}\nGRUPO B = {lista_grupos()[1]}\nGRUPO C = {lista_grupos()[2]}\nGRUPO D = {lista_grupos()[3]}\nGRUPO E = {lista_grupos()[4]}\nGRUPO F = {lista_grupos()[5]}\nGRUPO G = {lista_grupos()[6]}\nGRUPO H = {lista_grupos()[7]}'''.format(end='').center(80))
+    print (f'Total de Equipes: {len(descompactador_equipes(3))}'.center(80))
 def menu():
     while True:
         print ("Digite 1 para sair do Programa.")
@@ -438,16 +558,9 @@ def menu():
                 case 4:
                     janela()
                 case 5:
-                    print (f'''
-                    GRUPO A = {lista_grupos()[0]}
-                    GRUPO B = {lista_grupos()[1]}
-                    GRUPO C = {lista_grupos()[2]}
-                    GRUPO D = {lista_grupos()[3]}
-                    GRUPO E = {lista_grupos()[4]}
-                    GRUPO F = {lista_grupos()[5]}
-                    GRUPO G = {lista_grupos()[6]}
-                    GRUPO H = {lista_grupos()[7]}
-                    Total de Equipes: {len(descompactador_equipes(3))}''')
+                    janela_grupos()
+                case 6:
+                    janela_jogos()
                 case other:
                     print ("Opção Invalida, tente novamente.")
                     menu()
