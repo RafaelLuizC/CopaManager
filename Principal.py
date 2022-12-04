@@ -85,20 +85,20 @@ def excluir_equipes(equipe): #Esta funcionando perfeitamente! 25\11\2022 Rafael!
     with open ("equipes.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
         for item in lista_equipes:
             if item['equipe'] != equipe: #Verifica se o nome da equipe é diferente do nome da equipe que o usuario deseja excluir.
-                jogos.write(f"{item[0]}(-){item[1]}(-){item[2]}(-)\n") #Escreve no Banco de Dados.
-    with open ("jogos.txt","r",encoding="utf-8") as banco_de_dados: #Abre o Banco de Dados.
-        lista_jogos = descompactador_jogos(2)
-        for item in lista_jogos:
-            if item[0] == equipe:
-                item[0] = "EQUIPE EXCLUIDA"
-            elif item[1] == equipe:
-                item[1] = "EQUIPE EXCLUIDA"
-            lista_jogos.append(item)
+                jogos.write(f"{item['equipe']}(-){item['abreviacao']}(-){item['grupo']}(-)\n") #Escreve no Banco de Dados.
+    lista_jogos = descompactador_jogos(2)
+    lista_temp = []
+    for item in lista_jogos:
+        if item['equipe1'] == equipe:
+            item['equipe1'] = "EQUIPE EXCLUIDA"
+        elif item['equipe2'] == equipe:
+            item['equipe2'] = "EQUIPE EXCLUIDA"
+        lista_temp.append(item)
     with open ("jogos.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
-        for item in lista_jogos:
-            if item[0] == "EQUIPE EXCLUIDA" and item[1] == "EQUIPE EXCLUIDA":
+        for item in lista_temp:
+            if item['equipe1'] == "EQUIPE EXCLUIDA" and item['equipe2'] == "EQUIPE EXCLUIDA":
                 continue
-            jogos.write(f"{item[0]}(-){item[1]}(-){item[2]}(-){item[3]}(-){item[4]}(-){item[5]}(-)\n")
+            jogos.write(f"{item['equipe1']}(-){item['equipe2']}(-){item['placar1']}(-){item['placar2']}(-){item['faltas1']}(-){item['faltas2']}(-)\n")
     return (print("Equipe excluida com sucesso!"))
 
 def excluir_jogos(jogo_excluir):
@@ -218,15 +218,16 @@ def editar_equipes(equipe): #Esta funcionando perfeitamente! 25\11\2022 Rafael!
         else:
             break
     for linha in descompactador_equipes(3): #Recebe uma lista para comparação.
-        if linha[0] == equipe:
-            linha[0] = selecao_editada
-            linha[1] = selecao_editada[0:3].upper()
+        if linha['equipe'] == equipe:
+            linha['equipe'] = selecao_editada
+            linha['abreviacao'] = selecao_editada[0:3].upper()
             lista_equipes.append(linha)
         else:
             lista_equipes.append(linha)
+        print (lista_equipes)
     with open ("equipes.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
         for item in lista_equipes:
-            jogos.write(f"{item[0]}(-){item[1]}(-){item[2]}(-)\n") #Escreve no Banco de Dados.
+            jogos.write(f"{item['equipe']}(-){item['abreviacao']}(-){item['grupo']}(-)\n") #Escreve no Banco de Dados.
     with open ("jogos.txt","r",encoding="utf-8") as banco_de_dados: #Abre o Banco de Dados.
         lista_jogos = []
         for linha in banco_de_dados.readlines(): #Percorre o Banco de Dados.
