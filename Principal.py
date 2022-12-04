@@ -224,7 +224,7 @@ def editar_equipes(equipe): #Esta funcionando perfeitamente! 25\11\2022 Rafael!
             lista_equipes.append(linha)
         else:
             lista_equipes.append(linha)
-    with open ("equipes2.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
+    with open ("equipes.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
         for item in lista_equipes:
             jogos.write(f"{item[0]}(-){item[1]}(-){item[2]}(-)\n") #Escreve no Banco de Dados.
     with open ("jogos.txt","r",encoding="utf-8") as banco_de_dados: #Abre o Banco de Dados.
@@ -237,7 +237,7 @@ def editar_equipes(equipe): #Esta funcionando perfeitamente! 25\11\2022 Rafael!
             elif linha[1] == equipe:
                 linha[1] = selecao_editada
             lista_jogos.append(linha)
-    with open ("jogos2.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
+    with open ("jogos.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
         for item in lista_jogos:
             jogos.write(f"{item[0]}(-){item[1]}(-){item[2]}(-){item[3]}(-){item[4]}(-){item[5]}(-)\n")
     return (print("Seleção editada com sucesso!"))
