@@ -1,5 +1,8 @@
+import os
+import time
+
 #Essa função serve para retirar os arquivos de texto, e transformar em uma lista.
-def descompactador_equipes(): #Esta funcionando perfeitamente! 25\11\2022 Rafael!
+def descompactador_equipes(ordenador): #Esta funcionando perfeitamente! 25\11\2022 Rafael!
     lista = []
     with open ("equipes.txt","r",encoding="utf-8") as banco_de_dados: #Abre o Banco de Dados.
         for linha in banco_de_dados.readlines(): #Percorre o Banco de Dados.
@@ -7,16 +10,33 @@ def descompactador_equipes(): #Esta funcionando perfeitamente! 25\11\2022 Rafael
             linha[2] = linha[2][0] #Retira o /n do final da linha
             dicionario = {'equipe':linha[0],'abreviacao':linha[1],'grupo':linha[2]} #Cria um dicionario com os dados do Banco de Dados.
             lista.append(dicionario) #Adiciona o dicionario a lista.
+        if ordenador == 1:
+            lista = sorted(lista, key=lambda k: k['equipe']) #Ordena a lista pelo nome da equipe.
+        elif ordenador == 2:
+            lista = sorted(lista, key=lambda k: k['abreviacao']) #Ordena a lista pela abreviação.
+        elif ordenador == 3:
+            lista = sorted(lista, key=lambda k: k['grupo']) #Ordena a lista pelo grupo.
     return lista #Retorna a lista de dicionarios.
 
-def descompactador_jogos(): #Esta funcionando perfeitamente! 30\11\2022 Rafael!
+def descompactador_jogos(ordenador): #Esta funcionando perfeitamente! 4\12\2022 Rafael!
     lista = []
     with open ("jogos.txt","r",encoding="utf-8") as banco_de_dados: #Abre o Banco de Dados.
         for linha in banco_de_dados.readlines(): #Percorre o Banco de Dados.
             linha = linha.split('(-)') #Separa os dados do Banco de Dados.
-            linha[2] = linha[2][0] #Retira o /n do final da linha
+            linha[5] = linha[5][0] #Retira o /n do final da linha
+            #Transforma as faltas, e placar em numeros inteiros dentro do dicionario.
+            linha[2] = int(linha[2])
+            linha[3] = int(linha[3])
+            linha[4] = int(linha[4])
+            linha[5] = int(linha[5])
             dicionario = {'equipe1':linha[0],'equipe2':linha[1],'placar1':linha[2],'placar2':linha[3],'faltas1':linha[4],'faltas2':linha[5]} #Cria um dicionario com os dados do Banco de Dados.
             lista.append(dicionario) #Adiciona o dicionario a lista.
+        if ordenador == 1: #Ordena a lista por maior placar.
+            lista = sorted(lista, key=lambda k: k['placar1'], reverse=True)
+        elif ordenador == 2:
+            lista = sorted(lista, key=lambda k: k['equipe1'])
+        elif ordenador == 3:
+            lista = sorted(lista, key=lambda k: k['faltas1'])
     return lista #Retorna a lista de dicionarios.
 
 ######################################################################################################
@@ -24,7 +44,7 @@ def descompactador_jogos(): #Esta funcionando perfeitamente! 30\11\2022 Rafael!
 ######################################################################################################
 
 def lista_grupos(): #Esta funcionando perfeitamente! 30\11\2022 Rafael!
-    lista = descompactador_equipes() #Chama a função descompactador_equipes.
+    lista = descompactador_equipes(3) #Chama a função descompactador_equipes.
     a = [] #Cria uma lista vazia.
     b = []
     c = []
@@ -59,6 +79,76 @@ def lista_grupos(): #Esta funcionando perfeitamente! 30\11\2022 Rafael!
             item = item['equipe'],item['abreviacao']
             h.append(item)
     return a,b,c,d,e,f,g,h #Retorna as listas A,B,C,D,E,F,G e H.
+
+def excluir_equipes(equipe): #Esta funcionando perfeitamente! 25\11\2022 Rafael!
+    lista_equipes = []
+    with open ("equipes.txt","r",encoding="utf-8") as banco_de_dados: #Abre o Banco de Dados.
+        for linha in banco_de_dados.readlines(): #Percorre o Banco de Dados.
+            linha = linha.split('(-)') #Separa os dados do Banco de Dados.
+            linha[2] = linha[2][0] #Retira o /n do final da linha
+            if linha[0] == equipe:
+                continue
+            else:
+                lista_equipes.append(linha)
+    with open ("equipes.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
+        for item in lista_equipes:
+            jogos.write(f"{item[0]}(-){item[1]}(-){item[2]}(-)\n") #Escreve no Banco de Dados.
+    with open ("jogos.txt","r",encoding="utf-8") as banco_de_dados: #Abre o Banco de Dados.
+        lista_jogos = []
+        for linha in banco_de_dados.readlines(): #Percorre o Banco de Dados.
+            linha = linha.split('(-)') #Separa os dados do Banco de Dados.
+            linha[5] = linha[5][0] #Retira o /n do final da linha
+            if linha[0] == equipe:
+                linha[0] = "EQUIPE EXCLUIDA"
+            elif linha[1] == equipe:
+                linha[1] = "EQUIPE EXCLUIDA"
+            lista_jogos.append(linha)
+    with open ("jogos.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
+        for item in lista_jogos:
+            if item[0] == "EQUIPE EXCLUIDA" and item[1] == "EQUIPE EXCLUIDA":
+                continue
+            jogos.write(f"{item[0]}(-){item[1]}(-){item[2]}(-){item[3]}(-){item[4]}(-){item[5]}(-)\n")
+    return (print("Equipe excluida com sucesso!"))
+
+def editar_equipes(equipe): #Esta funcionando perfeitamente! 25\11\2022 Rafael!
+    lista_equipes = []
+    while True:
+        selecao_editada = input("Digite o nome da seleção que deseja editar: ").upper()
+        if subsubvalidaSelecao(selecao_editada) == False:
+            print("Digite um nome válido!")
+            continue
+        else:
+            break
+    with open ("equipes.txt","r",encoding="utf-8") as banco_de_dados: #Abre o Banco de Dados.
+        for linha in banco_de_dados.readlines(): #Percorre o Banco de Dados.
+            linha = linha.split('(-)') #Separa os dados do Banco de Dados.
+            linha[2] = linha[2][0] #Retira o /n do final da linha
+            if linha[0] == equipe:
+                linha[0] = selecao_editada
+                lista_equipes.append(linha)
+            else:
+                lista_equipes.append(linha)
+    with open ("equipes.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
+        for item in lista_equipes:
+            jogos.write(f"{item[0]}(-){item[1]}(-){item[2]}(-)\n") #Escreve no Banco de Dados.
+    with open ("jogos.txt","r",encoding="utf-8") as banco_de_dados: #Abre o Banco de Dados.
+        lista_jogos = []
+        for linha in banco_de_dados.readlines(): #Percorre o Banco de Dados.
+            linha = linha.split('(-)') #Separa os dados do Banco de Dados.
+            linha[5] = linha[5][0] #Retira o /n do final da linha
+            if linha[0] == equipe:
+                linha[0] = selecao_editada
+            elif linha[1] == equipe:
+                linha[1] = selecao_editada
+            lista_jogos.append(linha)
+    with open ("jogos.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
+        for item in lista_jogos:
+            jogos.write(f"{item[0]}(-){item[1]}(-){item[2]}(-){item[3]}(-){item[4]}(-){item[5]}(-)\n")
+    return (print("Seleção editada com sucesso!"))
+
+def separador_print(valor):
+    for i in range(valor):
+        print()
 
 def separador(lista):
     lista_separada = []
@@ -100,6 +190,7 @@ def janelaselecoes(selecao): #Esta funcionando perfeitamente! 01\12\2022 Rafael!
                 valores[5].append(f'O time {item["equipe2"]} perdeu para o time {item["equipe1"]} por {item["placar2"]}x{item["placar1"]}')
     print (f'Gols marcados: {sum(valores[0])}')
     print (f'Gols sofridos: {sum(valores[1])}')
+    print (f'Saldo de Gols: {sum(valores[0]) - sum(valores[1])}')
     print (f'Faltas cometidas: {sum(valores[2])}')
     print (f'Faltas sofridas: {sum(valores[3])}')
     if len(valores[4]) == 0:
@@ -117,36 +208,88 @@ def janelaselecoes(selecao): #Esta funcionando perfeitamente! 01\12\2022 Rafael!
     else:
         for item in valores[5]:
             print (item)            
-    acao = input('Pressione enter para voltar ao menu')
+    acao = input('Pressione enter para voltar ao menu').upper()
+    match acao:
+        case "EXCLUIR":
+            print ("Tem certeza que deseja excluir a equipe? [S] Para Excluir, [N] Para Voltar ao Menu")
+            acao = input().upper()
+            if acao == "S":
+                excluir_equipes(selecao)
+                janela()
+        case "EDITAR":
+            editar_equipes(selecao)
+            janela()
 
 def janela():
-    lista1 = separador(descompactador_equipes())
+    ordenacao = 3
+    lista1 = separador(descompactador_equipes(ordenacao))#Por padrão deixei em 3, que representa a separação por grupo.
     x = 0
     while True:
+        os.system('cls')
+        separador_print(3)
+        #Montando uma Janela para essa lista.
         for i in range(len(lista1[x])):
-            print (f'{lista1[x][i]["equipe"]} - {lista1[x][i]["abreviacao"]} - {lista1[x][i]["grupo"]}')
-        print (f'Voce esta na Pagina {x} de {len(lista1)-1}')
+            #Printa os dados da lista1, 'equipe' no canto esquerdo, 'abreviacao' no centro e 'grupo' no canto direito.
+            print (f"{lista1[x][i]['equipe']:<20}{lista1[x][i]['abreviacao']:^10}{lista1[x][i]['grupo']:^10}".center(80))
+            print (("-"*40).center(80))
+        separador_print(2)
+        print (f'Você está na página {x} de {len(lista1)-1}'.center(80))
+        separador_print(2)
+        print (f'[ORDENAR] - [SAIR] = [VOLTAR] para voltar a Pagina [AVANÇAR] para ir para a proxima Pagina'.center(80))
         opcao = input ("Digite o Valor Desejado: ").upper()
-        if opcao == "SAIR":
+        #Aqui verifica se a opcao escolhida é um nome presente na lista que esta sendo apresentada.
+        if opcao in [lista1[x][i]["equipe"] for i in range(len(lista1[x]))]: #CHORA BOY ESSA AQUI FUNCIONOU!!!!!!!!!!!!!
+            if opcao == (lista1[x][0]["equipe"]):
+                janelaselecoes(lista1[x][0]["equipe"])
+            elif opcao == (lista1[x][1]["equipe"]):
+                janelaselecoes(lista1[x][1]["equipe"])
+            elif opcao == (lista1[x][2]["equipe"]):
+                janelaselecoes(lista1[x][2]["equipe"])
+            elif opcao == (lista1[x][3]["equipe"]):
+                janelaselecoes(lista1[x][3]["equipe"])
+            elif opcao == (lista1[x][4]["equipe"]):
+                janelaselecoes(lista1[x][4]["equipe"])
+        elif opcao == "SAIR": #Sai do programa.
             break
-        elif opcao == "VOLTAR":
-            x = x - 1
-            if x == -1:
-                x = 0
+        elif opcao == "VOLTAR": #Volta para a pagina anterior.
+            x = x - 1 if x > 0 else 0
         elif opcao == "AVANCAR":
-            x = x + 1
-            if x == len(lista1):
-                x = 0
-        elif opcao == (lista1[x][0]["equipe"]):
-            janelaselecoes(lista1[x][0]["equipe"])
-        elif opcao == (lista1[x][1]["equipe"]):
-            janelaselecoes(lista1[x][1]["equipe"])
-        elif opcao == (lista1[x][2]["equipe"]):
-            janelaselecoes(lista1[x][2]["equipe"])
-        elif opcao == (lista1[x][3]["equipe"]):
-            janelaselecoes(lista1[x][3]["equipe"])
-        elif opcao == (lista1[x][4]["equipe"]):
-            janelaselecoes(lista1[x][4]["equipe"])
+            x = x + 1 if x < len(lista1)-1 else len(lista1)-1
+        elif opcao == "ORDENAR":
+            ordenacao -= 1
+            if ordenacao == 0:
+                ordenacao = 3
+            lista1 = separador(descompactador_equipes(ordenacao))
+
+def janela_jogos():
+    ordenacao = 3
+    lista1 = separador(descompactador_jogos(3))#Por padrão deixei em 3, que representa a separação por grupo.
+    x = 0
+    while True:
+        os.system('cls')
+        separador_print(3)
+        #Montando uma Janela para essa lista.
+        for i in range(len(lista1[x])):
+            print (f'Jogo numero {i+1+(5*x)}'.center(80))
+            print (f"{lista1[x][i]['equipe1']:>20} {lista1[x][i]['placar1']:>3} x {lista1[x][i]['placar2']:<3} {lista1[x][i]['equipe2']:<20}".center(80))
+            #Printa uma linha de acordo com o tamanho dos times.
+        separador_print(2)
+        print (f'[ORDENAR] - [SAIR] = [VOLTAR] para voltar a Pagina [AVANÇAR] para ir para a proxima Pagina'.center(80))
+        print (f'Voce esta na Pagina {x} de {len(lista1)-1}'.center(80))
+        separador_print(2)
+        opcao = input ("Digite o Valor Desejado: ").upper()
+        #Aqui verifica se a opcao escolhida é um nome presente na lista que esta sendo apresentada.
+        if opcao == "SAIR": #Sai do programa.
+            break
+        elif opcao == "VOLTAR": #Volta para a pagina anterior.
+            x = x - 1 if x > 0 else 0
+        elif opcao == "AVANCAR":
+            x = x + 1 if x < len(lista1)-1 else len(lista1)-1
+        elif opcao == "ORDENAR":
+            ordenacao -= 1
+            if ordenacao == 0:
+                ordenacao = 3
+            lista1 = separador(descompactador_jogos(ordenacao))
 
 def validagrupo(): #Esta Funcionando Perfeitamente! 25\11\2022 Rafael!
     while True:  #Loop infinito.
@@ -166,7 +309,7 @@ def validagrupo(): #Esta Funcionando Perfeitamente! 25\11\2022 Rafael!
                 
 def contador(pesquisa):
     cont = 0 #Contador
-    for item in descompactador_equipes(): #Percorre o Banco de Dados.
+    for item in descompactador_equipes(3): #Percorre o Banco de Dados.
         if cont == 3: #Verifica se o contador é igual a x, o Limite é 4 pois é o total que cabem de grupo -1.
             return False #Retorna False caso o contador chegue ao valor de X.   
         elif item['grupo'] == pesquisa: #Verifica se o item da coluna é igual ao item buscado.
@@ -186,7 +329,7 @@ def validaabreviacao(): #Esta Funcionando Perfeitamente! 01\12\2022 Rafael! \\\ 
                 return abrev #Retorna a abreviação caso ela não exista no Banco de Dados.
 
 def subabreviacao(abreviacao): #Essa função testa os valores digitados no cadastro de Abreviações
-    for linhas in descompactador_equipes(): #Percorre o Banco de Dados.
+    for linhas in descompactador_equipes(2): #Percorre o Banco de Dados.
         if abreviacao == linhas['abreviacao']: #Verifica se a abreviação já esta cadastrada.
             return False #Retorna False caso a abreviação já esteja cadastrada.
     return True #Retorna True caso a abreviação não esteja cadastrada.
@@ -208,7 +351,7 @@ def validaselecao(): #Essa função serve para Validar os dados informados para 
                 continue
 
 def subvalidaselecao(selecao): #Esta Funcionando Perfeitamente! 25\11\2022 Rafael!
-    for linhas in descompactador_equipes():
+    for linhas in descompactador_equipes(3):
         if selecao == linhas['equipe']: #Verifica se o nome da seleção já existe no banco de dados.
             return False
     return True
@@ -217,7 +360,6 @@ def subsubvalidaSelecao(checagem): # Essa função serve para checar se os valor
     if checagem.isalpha() == False: # Verifica se o valor é alfabético
         return False
 
-#Essa função serve para cadastrar as equipes.
 def cadastroequipes():                  #Esta Funcionando Perfeitamente! 25\11\2022 Rafael!
     selecao = validaselecao()           #Chama a função ValidaSelecao para validar o nome da seleção.
     abrev = validaabreviacao()          #Chama a função ValidaAbreviacao para validar a abreviação da seleção.
@@ -261,7 +403,7 @@ def cadastrojogos(): #Esta Funcionando Perfeitamente! 30\11\2022 Rafael!
 def subcadastrojogos(): 
     while True: #Loop para validar o nome da seleção.
         busca = input ("Digite o Nome da Seleção: ").upper() #Pede o nome da seleção.
-        for item in descompactador_equipes(): #Percorre o Banco de Dados.
+        for item in descompactador_equipes(3): #Percorre o Banco de Dados.
             if item['equipe'] == busca: #Verifica se o nome da seleção existe no Banco de Dados.
                 return item #Retorna o nome da seleção.
         print ("Seleção não cadastrada, Gostaria de tentar novamente, ou cadastrar outra?") 
@@ -305,7 +447,7 @@ def menu():
                     GRUPO F = {lista_grupos()[5]}
                     GRUPO G = {lista_grupos()[6]}
                     GRUPO H = {lista_grupos()[7]}
-                    Total de Equipes: {len(descompactador_equipes())}''')
+                    Total de Equipes: {len(descompactador_equipes(3))}''')
                 case other:
                     print ("Opção Invalida, tente novamente.")
                     menu()
