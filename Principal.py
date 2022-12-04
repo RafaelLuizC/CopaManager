@@ -138,7 +138,7 @@ def editar_jogos(jogo_editar):
 def janela_partida(lista):
     os.system('cls')
     #Vai começçar a interface que apresenta os dados da partida.
-    separador_print(3)
+    print ("\n\n\n")
     #Aqui vai ser apresentado o nome das equipes que Jogaram a partida, de um lado a Equipe 1 e do outro a Equipe 2.
     print (f'SELEÇÕES\n'.center(80))
     print (lista['equipe1'].center(40),lista['equipe2'].center(40))
@@ -149,7 +149,7 @@ def janela_partida(lista):
     print (f'VENCEDOR\n'.center(80))
     placar = lista['equipe1'] if lista['placar1'] > lista['placar2'] else lista['equipe2']
     print (placar.center(80))
-    separador_print(3)
+    print ("\n\n\n")
     acao = input('Pressione enter para voltar ao menu').upper()
     match acao:
         case "EXCLUIR":
@@ -176,10 +176,10 @@ def janela_jogos():
             print (f'Jogo numero {i+1+(5*x)}'.center(80))
             print (f"{lista1[x][i]['equipe1']:>20} {lista1[x][i]['placar1']:>3} x {lista1[x][i]['placar2']:<3} {lista1[x][i]['equipe2']:<20}".center(80))
             #Printa uma linha de acordo com o tamanho dos times.
-        separador_print(2)
+        print ("\n\n")
         print (f'[ORDENAR] - [SAIR] = [VOLTAR] para voltar a Pagina [AVANÇAR] para ir para a proxima Pagina'.center(80))
         print (f'Voce esta na Pagina {x} de {len(lista1)-1}'.center(80))
-        separador_print(2)
+        print ("\n\n")
         opcao = input ("Digite o Valor Desejado: ").upper()
         #Aqui verifica se a opcao escolhida é um nome presente na lista que esta sendo apresentada.
         if opcao == "SAIR": #Sai do programa.
@@ -209,24 +209,22 @@ def janela_jogos():
                 mensagem = ("Opção Invalida")
         
 def editar_equipes(equipe): #Esta funcionando perfeitamente! 25\11\2022 Rafael!
-    lista_equipes = []
-    while True:
-        selecao_editada = input("Digite o nome da seleção que deseja editar: ").upper()
-        if subsubvalidaSelecao(selecao_editada) == False:
+    lista_equipes = [] #Lista que vai receber os dados editados das equipes.
+    while True: #Loop para editar os dados da equipe.
+        selecao_editada = input("Digite o nome da seleção que deseja editar: ").upper() #Recebe o novo nome da seleção
+        if subsubvalidaSelecao(selecao_editada) == False: #Verifica se o nome da seleção é valido.
             print("Digite um nome válido!")
             continue
         else:
             break
-    with open ("equipes.txt","r",encoding="utf-8") as banco_de_dados: #Abre o Banco de Dados.
-        for linha in banco_de_dados.readlines(): #Percorre o Banco de Dados.
-            linha = linha.split('(-)') #Separa os dados do Banco de Dados.
-            linha[2] = linha[2][0] #Retira o /n do final da linha
-            if linha[0] == equipe:
-                linha[0] = selecao_editada
-                lista_equipes.append(linha)
-            else:
-                lista_equipes.append(linha)
-    with open ("equipes.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
+    for linha in descompactador_equipes(3): #Recebe uma lista para comparação.
+        if linha[0] == equipe:
+            linha[0] = selecao_editada
+            linha[1] = selecao_editada[0:3].upper()
+            lista_equipes.append(linha)
+        else:
+            lista_equipes.append(linha)
+    with open ("equipes2.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
         for item in lista_equipes:
             jogos.write(f"{item[0]}(-){item[1]}(-){item[2]}(-)\n") #Escreve no Banco de Dados.
     with open ("jogos.txt","r",encoding="utf-8") as banco_de_dados: #Abre o Banco de Dados.
@@ -239,14 +237,15 @@ def editar_equipes(equipe): #Esta funcionando perfeitamente! 25\11\2022 Rafael!
             elif linha[1] == equipe:
                 linha[1] = selecao_editada
             lista_jogos.append(linha)
-    with open ("jogos.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
+    with open ("jogos2.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
         for item in lista_jogos:
             jogos.write(f"{item[0]}(-){item[1]}(-){item[2]}(-){item[3]}(-){item[4]}(-){item[5]}(-)\n")
     return (print("Seleção editada com sucesso!"))
 
-def separador_print(valor):
-    for i in range(valor):
-        print()
+def subsubvalidaSelecao(checagem): # Essa função serve para checar se os valores inseridos no cadastro são caracteres especiais
+    checagem = checagem.replace(" ","") # Retira os Espaços
+    if checagem.isalpha() == False: # Verifica se o valor é alfabético
+        return False
 
 def separador(lista):
     lista_separada = []
@@ -263,7 +262,7 @@ def separador(lista):
 def janelaselecoes(selecao): #Esta funcionando perfeitamente! 01\12\2022 Rafael!
     valores = [[],[],[],[],[],[],[]] #Valores[0] = Gols Marcados, Valores[1] = Gols Sofridos, Valores[2] = Faltas Cometidas, Valores[3] = Faltas Sofridas
     #Valores[4] = Vitorias S2 , Valores[5] = Derrotas , Valores[6] = Empates
-    for item in descompactador_jogos(): #Percorre a lista de dicionarios.
+    for item in descompactador_jogos(3): #Percorre a lista de dicionarios.
         if selecao == item["equipe1"]: #Se a seleção for igual a equipe1, então...
             valores[0].append(int(item["placar1"]))
             valores[1].append(int(item["placar2"]))
@@ -324,15 +323,15 @@ def janela():
     x = 0
     while True:
         os.system('cls')
-        separador_print(3)
+        print ("\n\n\n")
         #Montando uma Janela para essa lista.
         for i in range(len(lista1[x])):
             #Printa os dados da lista1, 'equipe' no canto esquerdo, 'abreviacao' no centro e 'grupo' no canto direito.
             print (f"{lista1[x][i]['equipe']:<20}{lista1[x][i]['abreviacao']:^10}{lista1[x][i]['grupo']:^10}".center(80))
             print (("-"*40).center(80))
-        separador_print(2)
+        print ("\n\n")
         print (f'Você está na página {x} de {len(lista1)-1}'.center(80))
-        separador_print(2)
+        print ("\n\n")
         print (f'[ORDENAR] - [SAIR] = [VOLTAR] para voltar a Pagina [AVANÇAR] para ir para a proxima Pagina'.center(80))
         opcao = input ("Digite o Valor Desejado: ").upper()
         #Aqui verifica se a opcao escolhida é um nome presente na lista que esta sendo apresentada.
@@ -373,10 +372,10 @@ def janela_jogos():
             print (f'Jogo numero {i+1+(5*x)}'.center(80))
             print (f"{lista1[x][i]['equipe1']:>20} {lista1[x][i]['placar1']:>3} x {lista1[x][i]['placar2']:<3} {lista1[x][i]['equipe2']:<20}".center(80))
             #Printa uma linha de acordo com o tamanho dos times.
-        separador_print(2)
+        print ("\n\n")
         print (f'[ORDENAR] - [SAIR] = [VOLTAR] para voltar a Pagina [AVANÇAR] para ir para a proxima Pagina'.center(80))
         print (f'Voce esta na Pagina {x} de {len(lista1)-1}'.center(80))
-        separador_print(2)
+        print ("\n\n")
         opcao = input ("Digite o Valor Desejado: ").upper()
         #Aqui verifica se a opcao escolhida é um nome presente na lista que esta sendo apresentada.
         if opcao == "SAIR": #Sai do programa.
@@ -404,8 +403,6 @@ def janela_jogos():
                 janela_partida(lista1[x][4])
             else:
                 mensagem = ("Opção Invalida")
-        
-
 
 def validagrupo(): #Esta Funcionando Perfeitamente! 25\11\2022 Rafael!
     while True:  #Loop infinito.
@@ -532,22 +529,47 @@ def subcadastrojogos():
 
 def janela_grupos():
     os.system('cls')
-    print (f'''GRUPO A = {lista_grupos()[0]}\nGRUPO B = {lista_grupos()[1]}\nGRUPO C = {lista_grupos()[2]}\nGRUPO D = {lista_grupos()[3]}\nGRUPO E = {lista_grupos()[4]}\nGRUPO F = {lista_grupos()[5]}\nGRUPO G = {lista_grupos()[6]}\nGRUPO H = {lista_grupos()[7]}'''.format(end='').center(80))
+    print ("\n\n\n\n")
+    print (f'''GRUPO A = {lista_grupos()[0]}\nGRUPO B = {lista_grupos()[1]}\nGRUPO C = {lista_grupos()[2]}\nGRUPO D = {lista_grupos()[3]}\nGRUPO E = {lista_grupos()[4]}\nGRUPO F = {lista_grupos()[5]}\nGRUPO G = {lista_grupos()[6]}\nGRUPO H = {lista_grupos()[7]}'''.format(end='-').center(80))
+    print ("\n\n\n")
     print (f'Total de Equipes: {len(descompactador_equipes(3))}'.center(80))
+    print ("\n\n\n")
+    input ("Pressione Enter para Voltar ao Menu Principal.")
+
+def pesquisa_equipe():
+    os.system('cls')
+    print ("\n\n\n\n")
+    busca = input ("Digite o Nome da Seleção: ").upper()
+    for item in descompactador_equipes(3):
+        if item['equipe'] == busca:
+            janelaselecoes(item['equipe'])
+            return
+    print ("Seleção não cadastrada.")
+    print ("\n\n\n")
+    input ("Pressione Enter para Voltar ao Menu Principal.")
+
 def menu():
+    mensagem = "Menu Principal"
     while True:
-        print ("Digite 1 para sair do Programa.")
-        print ("Digite 2 para cadastrar uma nova Equipe.")
-        print ("Digite 3 para cadastrar um novo Jogo")
-        print ("Digite 4 para ver o total de jogos salvos.")
-        print ("Digite 5 para ver o numero total de equipes.")
-        opção = input("Digite a opção desejada: ")
-        if len(opção) <= 0 or opção.isnumeric() == False:
-            print ("Opção Invalida, tente novamente.")
+        os.system('cls')
+        print("\n\n")
+        print (f'{mensagem}'.center(80))
+        print ("Digite 1 para sair do Programa.\n".center(80))
+        print ("Digite 2 para cadastrar uma nova Equipe.\n".center(80))
+        print ("Digite 3 para cadastrar um novo Jogo.\n".center(80))
+        print ("Digite 4 para ver o total de Jogos salvos.\n".center(80))
+        print ("Digite 5 para ver o numero total de Equipes.\n".center(80))
+        print ("Digite 6 para ver o numero total de Equipes.\n".center(80))
+        print ("Digite 7 para fazer uma pesquisa pelo nome da Equipe.\n".center(80))
+        print("Digite a opção desejada:".center(80))
+        print ("\n\n")
+        opcao = input()
+        if len(opcao) <= 0 or opcao.isnumeric() == False:
+            mensagem = ("Opção Invalida, tente novamente.")
             continue
         else:
-            opção = int(opção)
-            match opção:
+            opcao = int(opcao)
+            match opcao:
                 case 1:
                     print ("Obrigado por usar o Programa.")
                     break
@@ -558,10 +580,12 @@ def menu():
                 case 4:
                     janela()
                 case 5:
-                    janela_grupos()
-                case 6:
                     janela_jogos()
+                case 6:
+                    janela_grupos()
+                case 7:
+                    pesquisa_equipe()
                 case other:
                     print ("Opção Invalida, tente novamente.")
-                    menu()
+                    continue
 menu()
