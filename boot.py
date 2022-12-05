@@ -1,9 +1,10 @@
-#Produzido por Kaian Vinicius, @Kaian32
+#"Produzido por Kaian Vinicius (@Kaian32) e Rafael Luiz (@RafaelLuizC)"
 pronto = 'false'
 import sys #importa comandos do sistema
 from os import system #importa sistema
 import time #importa mecanismos de tempo
 system('cls') #limpa o que tinha antes
+version = "1.0" #versão do programa
 
 #animação de loading
 def loading():
@@ -87,6 +88,6 @@ done = "true"
 time.sleep(1) #tempo para visualização
 print(boot_text) #dá print na logo do CopaManager
 time.sleep(0.5) #tempo para visualização
-print("Versão BETA-FinalRelease")
+print(f'Versão {version}')
 print("Produzido por Kaian Vinicius (@Kaian32) e Rafael Luiz (@RafaelLuizC)")
 time.sleep(3) #tempo para visualização
