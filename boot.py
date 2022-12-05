@@ -4,7 +4,7 @@ import sys #importa comandos do sistema
 from os import system #importa sistema
 import time #importa mecanismos de tempo
 system('cls') #limpa o que tinha antes
-version = "1.0" #versão do programa
+version = "1.1" #versão do programa
 
 #animação de loading
 def loading():
