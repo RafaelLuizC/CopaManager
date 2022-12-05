@@ -147,6 +147,71 @@ def editar_jogos(jogo_editar):
         for item in lista2:
             banco_de_dados.write(f'{item["equipe1"]}(-){item["equipe2"]}(-){item["placar1"]}(-){item["placar2"]}(-){item["faltas1"]}(-){item["faltas2"]}\n')
 
+def janela():
+    ordenacao = 3
+    lista1 = separador(descompactador_equipes(ordenacao))#Por padrão deixei em 3, que representa a separação por grupo.
+    x = 0
+    while True:
+        if len(descompactador_jogos(1)) == 0:
+            system(clear_function)
+            print ("Você precisa adicionar um jogo primeiro!")
+            time.sleep(1)
+            system(clear_function)
+            menu()
+        os.system(clear_function)
+        print ("\n\n\n")
+        #Montando uma Janela para essa lista.
+        for i in range(len(lista1[x])):
+            #Printa os dados da lista1, 'equipe' no canto esquerdo, 'abreviacao' no centro e 'grupo' no canto direito.
+            print (f"{lista1[x][i]['equipe']:<20}{lista1[x][i]['abreviacao']:^10}{lista1[x][i]['grupo']:^10}".center(80))
+            print (("-"*40).center(80))
+        print ("\n\n")
+        print (f'Você está na página {x+1} de {len(lista1)}'.center(80))
+        print ("\n\n")
+        print (f'Digite uma das seguintes opções: 1) [SAIR] 2) [ORDENAR] 3) [AVANÇAR] 4) [VOLTAR]\n')
+        print ("Digite 1) [SAIR] para retornar ao menu.")
+        print ("Digite 2) [ORDENAR] para ordenar a lista (nome, abreviação ou grupo).")
+        print ("Digite 3) [AVANÇAR] para ir para a próxima página.")
+        print ("Digite 4) [VOLTAR] par retornar a página anterior.")
+        print ()
+        opcao = input ("Digite o valor Desejado: ").upper()
+        #Aqui verifica se a opcao escolhida é um nome presente na lista que esta sendo apresentada.
+        if opcao in [lista1[x][i]["equipe"] for i in range(len(lista1[x]))]: #CHORA BOY ESSA AQUI FUNCIONOU!!!!!!!!!!!!!
+            if opcao == (lista1[x][0]["equipe"]):
+                janelaselecoes(lista1[x][0]["equipe"])
+            elif opcao == (lista1[x][1]["equipe"]):
+                janelaselecoes(lista1[x][1]["equipe"])
+            elif opcao == (lista1[x][2]["equipe"]):
+                janelaselecoes(lista1[x][2]["equipe"])
+            elif opcao == (lista1[x][3]["equipe"]):
+                janelaselecoes(lista1[x][3]["equipe"])
+            elif opcao == (lista1[x][4]["equipe"]):
+                janelaselecoes(lista1[x][4]["equipe"])
+        elif opcao == "SAIR": #Sai do programa.
+            break
+        elif opcao == "1": #Sai do programa.
+            break
+        elif opcao == "VOLTAR": #Volta para a pagina anterior.
+            x = x - 1 if x > 0 else 0
+        elif opcao == "4": #Volta para a pagina anterior.
+            x = x - 1 if x > 0 else 0
+        elif opcao == "AVANCAR":
+            x = x + 1 if x < len(lista1)-1 else len(lista1)-1
+        elif opcao == "AVANÇAR":
+            x = x + 1 if x < len(lista1)-1 else len(lista1)-1
+        elif opcao == "3":
+            x = x + 1 if x < len(lista1)-1 else len(lista1)-1
+        elif opcao == "ORDENAR":
+            ordenacao -= 1
+            if ordenacao == 0:
+                ordenacao = 3
+            lista1 = separador(descompactador_equipes(ordenacao))
+        elif opcao == "2":
+            ordenacao -= 1
+            if ordenacao == 0:
+                ordenacao = 3
+            lista1 = separador(descompactador_equipes(ordenacao))
+
 def janela_partida(lista):
     os.system(clear_function)
     #Vai começçar a interface que apresenta os dados da partida.
@@ -180,104 +245,57 @@ def janela_jogos():
     x = 0
     mensagem = ''
     while True:
-        os.system(clear_function)
-        print (f'\n{mensagem.center(80)}\n')
-        mensagem = ''
-        #Montando uma Janela para essa lista.
-        for i in range(len(lista1[x])):
-            print (f'Jogo numero {i+1+(5*x)}'.center(80))
-            print (f"{lista1[x][i]['equipe1']:>20} {lista1[x][i]['placar1']:>3} x {lista1[x][i]['placar2']:<3} {lista1[x][i]['equipe2']:<20}".center(80))
-            #Printa uma linha de acordo com o tamanho dos times.
-        print ("\n\n")
-        print (f'Digite uma das seguintes opções: 1) [SAIR] 2) [ORDENAR] 3) [AVANÇAR] 4) [VOLTAR]\n'.center(80))
-        print ("Digite 1) [SAIR] para retornar ao menu.")
-        print ("Digite 2) [ORDENAR] para ordenar a lista (nome, abreviação ou grupo).")
-        print ("Digite 3) [AVANÇAR] para ir para a próxima página.")
-        print ("Digite 4) [VOLTAR] par retornar a página anterior.")
-        print ()
-        print (f'Voce esta na Pagina {x} de {len(lista1)-1}'.center(80))
-        print ("\n\n")
-        opcao = input ("Digite o Valor Desejado: ").upper()
-        #Aqui verifica se a opcao escolhida é um nome presente na lista que esta sendo apresentada.
-        if opcao == "SAIR": #Sai do programa.
-            break
-        elif opcao == "VOLTAR": #Volta para a pagina anterior.
-            x = x - 1 if x > 0 else 0
-        elif opcao == "AVANCAR":
-            x = x + 1 if x < len(lista1)-1 else len(lista1)-1
-        elif opcao == "AVANÇAR":
-            x = x + 1 if x < len(lista1)-1 else len(lista1)-1
-        elif opcao == "ORDENAR":
-            ordenacao -= 1
-            if ordenacao == 0:
-                ordenacao = 3
-            lista1 = separador(descompactador_jogos(ordenacao))
-        elif (opcao.isdigit()) == True:
-            opcao = int(opcao)
-            if opcao == ((x*5+1)):
-                janela_partida(lista1[x][0])
-            elif opcao == (x*5+2):
-                janela_partida(lista1[x][1])
-            elif opcao == (x*5+3):
-                janela_partida(lista1[x][2])
-            elif opcao == (x*5+4):
-                janela_partida(lista1[x][3])
-            elif opcao == (x*5+5):
-                janela_partida(lista1[x][4])
-            else:
-                mensagem = ("Opção inválida!")
-        
-def editar_equipes(equipe): #Esta funcionando perfeitamente! 25\11\2022 Rafael!
-    lista_equipes = [] #Lista que vai receber os dados editados das equipes.
-    while True: #Loop para editar os dados da equipe.
-        selecao_editada = input("Digite o nome da seleção que deseja editar: ").upper() #Recebe o novo nome da seleção
-        if subsubvalidaSelecao(selecao_editada) == False: #Verifica se o nome da seleção é valido.
-            print("Digite um nome válido!")
-            continue
+        if len(descompactador_jogos(1)) == 0:
+            system(clear_function)
+            print ("Você precisa adicionar um jogo primeiro!")
+            menu()
         else:
-            break
-    for linha in descompactador_equipes(3): #Recebe uma lista para comparação.
-        if linha['equipe'] == equipe:
-            linha['equipe'] = selecao_editada
-            linha['abreviacao'] = selecao_editada[0:3].upper()
-            lista_equipes.append(linha)
-        else:
-            lista_equipes.append(linha)
-        print (lista_equipes)
-    with open ("equipes.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
-        for item in lista_equipes:
-            jogos.write(f"{item['equipe']}(-){item['abreviacao']}(-){item['grupo']}(-)\n") #Escreve no Banco de Dados.
-    with open ("jogos.txt","r",encoding="utf-8") as banco_de_dados: #Abre o Banco de Dados.
-        lista_jogos = []
-        for linha in banco_de_dados.readlines(): #Percorre o Banco de Dados.
-            linha = linha.split('(-)') #Separa os dados do Banco de Dados.
-            linha[5] = linha[5][0] #Retira o /n do final da linha
-            if linha[0] == equipe:
-                linha[0] = selecao_editada
-            elif linha[1] == equipe:
-                linha[1] = selecao_editada
-            lista_jogos.append(linha)
-    with open ("jogos.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
-        for item in lista_jogos:
-            jogos.write(f"{item[0]}(-){item[1]}(-){item[2]}(-){item[3]}(-){item[4]}(-){item[5]}(-)\n")
-    return (print("Seleção editada com sucesso!"))
-
-def subsubvalidaSelecao(checagem): # Essa função serve para checar se os valores inseridos no cadastro são caracteres especiais
-    checagem = checagem.replace(" ","") # Retira os Espaços
-    if checagem.isalpha() == False: # Verifica se o valor é alfabético
-        return False
-
-def separador(lista):
-    lista_separada = []
-    #Essa função é responsavel por criar uma lista com 5 sublistas.
-    for x in range(len(lista)):
-        if x % 4 == 0: #Se o resto da divisão de x por 5 for igual a 0, então... 
-### PARA ALTERARA O TAMANHO DA LISTA, BASTA ALTERAR O NUMERO 5 PARA O NUMERO DESEJADO. ###
-            lista_separada.append([]) #Adiciona uma lista vazia a lista1.
-            lista_separada[-1].append(lista[x]) #Adiciona o item da lista na ultima posição da lista1.
-        else:
-            lista_separada[-1].append(lista[x]) #Caso o Resto da Divisão não seja 0 adiciona o item da lista na ultima posição da lista1.
-    return lista_separada #Retorna a lista1.
+            os.system(clear_function)
+            print (f'\n{mensagem.center(80)}\n')
+            mensagem = ''
+            #Montando uma Janela para essa lista.
+            for i in range(len(lista1[x])):
+                print (f'Jogo numero {i+1+(5*x)}'.center(80))
+                print (f"{lista1[x][i]['equipe1']:>20} {lista1[x][i]['placar1']:>3} x {lista1[x][i]['placar2']:<3} {lista1[x][i]['equipe2']:<20}".center(80))
+                #Printa uma linha de acordo com o tamanho dos times.
+            print ("\n\n")
+            print (f'Digite uma das seguintes opções: 1) [SAIR] 2) [ORDENAR] 3) [AVANÇAR] 4) [VOLTAR]\n'.center(80))
+            print ("Digite 1) [SAIR] para retornar ao menu.")
+            print ("Digite 2) [ORDENAR] para ordenar a lista (nome, abreviação ou grupo).")
+            print ("Digite 3) [AVANÇAR] para ir para a próxima página.")
+            print ("Digite 4) [VOLTAR] par retornar a página anterior.")
+            print ()
+            print (f'Voce esta na Pagina {x} de {len(lista1)-1}'.center(80))
+            print ("\n\n")
+            opcao = input ("Digite o Valor Desejado: ").upper()
+            #Aqui verifica se a opcao escolhida é um nome presente na lista que esta sendo apresentada.
+            if opcao == "SAIR": #Sai do programa.
+                break
+            elif opcao == "VOLTAR": #Volta para a pagina anterior.
+                x = x - 1 if x > 0 else 0
+            elif opcao == "AVANCAR":
+                x = x + 1 if x < len(lista1)-1 else len(lista1)-1
+            elif opcao == "AVANÇAR":
+                x = x + 1 if x < len(lista1)-1 else len(lista1)-1
+            elif opcao == "ORDENAR":
+                ordenacao -= 1
+                if ordenacao == 0:
+                    ordenacao = 3
+                lista1 = separador(descompactador_jogos(ordenacao))
+            elif (opcao.isdigit()) == True:
+                opcao = int(opcao)
+                if opcao == ((x*5+1)):
+                    janela_partida(lista1[x][0])
+                elif opcao == (x*5+2):
+                    janela_partida(lista1[x][1])
+                elif opcao == (x*5+3):
+                    janela_partida(lista1[x][2])
+                elif opcao == (x*5+4):
+                    janela_partida(lista1[x][3])
+                elif opcao == (x*5+5):
+                    janela_partida(lista1[x][4])
+                else:
+                    mensagem = ("Opção inválida!")
 
 def janelaselecoes(selecao): #Esta funcionando perfeitamente! 01\12\2022 Rafael!
     os.system(clear_function)
@@ -335,131 +353,58 @@ def janelaselecoes(selecao): #Esta funcionando perfeitamente! 01\12\2022 Rafael!
             acao = input().upper()
             if acao == "S":
                 excluir_equipes(selecao)
-                janela()
+                print ("Equipe excluida com sucesso!")
+                
         case "EDITAR":
             editar_equipes(selecao)
-            janela()
+            print ("Equipe editada com sucesso!")
+        
+def editar_equipes(equipe): #Esta funcionando perfeitamente! 25\11\2022 Rafael!
+    lista_equipes = [] #Lista que vai receber os dados editados das equipes.
+    while True: #Loop para editar os dados da equipe.
+        selecao_editada = input("Digite o nome da seleção que deseja editar: ").upper() #Recebe o novo nome da seleção
+        if subsubvalidaSelecao(selecao_editada) == False: #Verifica se o nome da seleção é valido.
+            print("Digite um nome válido!")
+            continue
+        else:
+            break
+    for linha in descompactador_equipes(3): #Recebe uma lista para comparação.
+        if linha['equipe'] == equipe:
+            linha['equipe'] = selecao_editada
+            linha['abreviacao'] = selecao_editada[0:3].upper()
+            lista_equipes.append(linha)
+        else:
+            lista_equipes.append(linha)
+        print (lista_equipes)
+    with open ("equipes.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
+        for item in lista_equipes:
+            jogos.write(f"{item['equipe']}(-){item['abreviacao']}(-){item['grupo']}(-)\n") #Escreve no Banco de Dados.
+    with open ("jogos.txt","r",encoding="utf-8") as banco_de_dados: #Abre o Banco de Dados.
+        lista_jogos = []
+        for linha in banco_de_dados.readlines(): #Percorre o Banco de Dados.
+            linha = linha.split('(-)') #Separa os dados do Banco de Dados.
+            linha[5] = linha[5][0] #Retira o /n do final da linha
+            if linha[0] == equipe:
+                linha[0] = selecao_editada
+            elif linha[1] == equipe:
+                linha[1] = selecao_editada
+            lista_jogos.append(linha)
+    with open ("jogos.txt","w",encoding="utf-8") as jogos: #Abre o Banco de Dados.
+        for item in lista_jogos:
+            jogos.write(f"{item[0]}(-){item[1]}(-){item[2]}(-){item[3]}(-){item[4]}(-){item[5]}(-)\n")
+    return (print("Seleção editada com sucesso!"))
 
-def janela():
-    ordenacao = 3
-    lista1 = separador(descompactador_equipes(ordenacao))#Por padrão deixei em 3, que representa a separação por grupo.
-    x = 0
-    while True:
-        os.system(clear_function)
-        print ("\n\n\n")
-        #Montando uma Janela para essa lista.
-        for i in range(len(lista1[x])):
-            #Printa os dados da lista1, 'equipe' no canto esquerdo, 'abreviacao' no centro e 'grupo' no canto direito.
-            print (f"{lista1[x][i]['equipe']:<20}{lista1[x][i]['abreviacao']:^10}{lista1[x][i]['grupo']:^10}".center(80))
-            print (("-"*40).center(80))
-        print ("\n\n")
-        print (f'Você está na página {x+1} de {len(lista1)}'.center(80))
-        print ("\n\n")
-        print (f'Digite uma das seguintes opções: 1) [SAIR] 2) [ORDENAR] 3) [AVANÇAR] 4) [VOLTAR]\n')
-        print ("Digite 1) [SAIR] para retornar ao menu.")
-        print ("Digite 2) [ORDENAR] para ordenar a lista (nome, abreviação ou grupo).")
-        print ("Digite 3) [AVANÇAR] para ir para a próxima página.")
-        print ("Digite 4) [VOLTAR] par retornar a página anterior.")
-        print ()
-        opcao = input ("Digite o valor Desejado: ").upper()
-        #Aqui verifica se a opcao escolhida é um nome presente na lista que esta sendo apresentada.
-        if opcao in [lista1[x][i]["equipe"] for i in range(len(lista1[x]))]: #CHORA BOY ESSA AQUI FUNCIONOU!!!!!!!!!!!!!
-            if opcao == (lista1[x][0]["equipe"]):
-                janelaselecoes(lista1[x][0]["equipe"])
-            elif opcao == (lista1[x][1]["equipe"]):
-                janelaselecoes(lista1[x][1]["equipe"])
-            elif opcao == (lista1[x][2]["equipe"]):
-                janelaselecoes(lista1[x][2]["equipe"])
-            elif opcao == (lista1[x][3]["equipe"]):
-                janelaselecoes(lista1[x][3]["equipe"])
-            elif opcao == (lista1[x][4]["equipe"]):
-                janelaselecoes(lista1[x][4]["equipe"])
-        elif opcao == "SAIR": #Sai do programa.
-            break
-        elif opcao == "1": #Sai do programa.
-            break
-        elif opcao == "VOLTAR": #Volta para a pagina anterior.
-            x = x - 1 if x > 0 else 0
-        elif opcao == "4": #Volta para a pagina anterior.
-            x = x - 1 if x > 0 else 0
-        elif opcao == "AVANCAR":
-            x = x + 1 if x < len(lista1)-1 else len(lista1)-1
-        elif opcao == "AVANÇAR":
-            x = x + 1 if x < len(lista1)-1 else len(lista1)-1
-        elif opcao == "3":
-            x = x + 1 if x < len(lista1)-1 else len(lista1)-1
-        elif opcao == "ORDENAR":
-            ordenacao -= 1
-            if ordenacao == 0:
-                ordenacao = 3
-            lista1 = separador(descompactador_equipes(ordenacao))
-        elif opcao == "2":
-            ordenacao -= 1
-            if ordenacao == 0:
-                ordenacao = 3
-            lista1 = separador(descompactador_equipes(ordenacao))
-
-def janela_jogos():
-    ordenacao = 3
-    lista1 = separador(descompactador_jogos(3))#Por padrão deixei em 3, que representa a separação por grupo.
-    x = 0
-    mensagem = ''
-    while True:
-        os.system(clear_function)
-        print (f'\n{mensagem.center(80)}\n')
-        mensagem = ''
-        #Montando uma Janela para essa lista.
-        for i in range(len(lista1[x])):
-            print (f'Jogo numero {i+1+(5*x)}'.center(80))
-            print (f"{lista1[x][i]['equipe1']:>20} {lista1[x][i]['placar1']:>3} x {lista1[x][i]['placar2']:<3} {lista1[x][i]['equipe2']:<20}".center(80))
-            #Printa uma linha de acordo com o tamanho dos times.
-        print ("\n\n")
-        print (f'Voce esta na página {x+1} de {len(lista1)}'.center(80))
-        print ("\n")
-        print (f'Digite uma das seguintes opções: S) [SAIR] O) [ORDENAR] A) [AVANÇAR] V) [VOLTAR]\n'.center(80))
-        print ("Digite S) [SAIR] para retornar ao menu.")
-        print ("Digite O) [ORDENAR] para ordenar a lista (nome, abreviação ou grupo).")
-        print ("Digite A) [AVANÇAR] para ir para a próxima página.")
-        print ("Digite V) [VOLTAR] par retornar a página anterior.")
-        print ("\n")
-        opcao = input ("Digite o valor desejado: ").upper()
-        #Aqui verifica se a opcao escolhida é um nome presente na lista que esta sendo apresentada.
-        if opcao == "SAIR": #Sai do programa.
-            break
-        elif opcao == "S": #Sai do programa.
-            break
-        elif opcao == "VOLTAR": #Volta para a pagina anterior.
-            x = x - 1 if x > 0 else 0
-        elif opcao == "V": #Volta para a pagina anterior.
-            x = x - 1 if x > 0 else 0
-        elif opcao == "AVANCAR":
-            x = x + 1 if x < len(lista1)-1 else len(lista1)-1
-        elif opcao == "AVANÇAR":
-            x = x + 1 if x < len(lista1)-1 else len(lista1)-1
-        elif opcao == "A":
-            x = x + 1 if x < len(lista1)-1 else len(lista1)-1
-        elif opcao == "ORDENAR":
-            ordenacao -= 1
-            if ordenacao == 0:
-                ordenacao = 3
-            lista1 = separador(descompactador_jogos(ordenacao))
-        elif opcao == "O":
-            ordenacao -= 1
-            if ordenacao == 0:
-                ordenacao = 3
-            lista1 = separador(descompactador_jogos(ordenacao))
-        elif (opcao.isdigit()) == True:
-            opcao = int(opcao)
-            if opcao == ((x*5+1)):
-                janela_partida(lista1[x][0])
-            elif opcao == (x*5+2):
-                janela_partida(lista1[x][1])
-            elif opcao == (x*5+3):
-                janela_partida(lista1[x][2])
-            elif opcao == (x*5+4):
-                janela_partida(lista1[x][3])
-            else:
-                mensagem = ("Opção invalida!")
+def separador(lista):
+    lista_separada = []
+    #Essa função é responsavel por criar uma lista com 5 sublistas.
+    for x in range(len(lista)):
+        if x % 4 == 0: #Se o resto da divisão de x por 5 for igual a 0, então... 
+### PARA ALTERARA O TAMANHO DA LISTA, BASTA ALTERAR O NUMERO 5 PARA O NUMERO DESEJADO. ###
+            lista_separada.append([]) #Adiciona uma lista vazia a lista1.
+            lista_separada[-1].append(lista[x]) #Adiciona o item da lista na ultima posição da lista1.
+        else:
+            lista_separada[-1].append(lista[x]) #Caso o Resto da Divisão não seja 0 adiciona o item da lista na ultima posição da lista1.
+    return lista_separada #Retorna a lista1.
 
 def validagrupo(): #Esta Funcionando Perfeitamente! 25\11\2022 Rafael!
     while True:  #Loop infinito.
@@ -475,8 +420,7 @@ def validagrupo(): #Esta Funcionando Perfeitamente! 25\11\2022 Rafael!
                 continue
         else:
             print ("Grupo inválido! Tente novamente.") 
-            continue
-                
+            continue             
 def contador(pesquisa):
     cont = 0 #Contador
     for item in descompactador_equipes(3): #Percorre o Banco de Dados.
@@ -502,7 +446,6 @@ def validaabreviacao(): #Esta Funcionando Perfeitamente! 01\12\2022 Rafael! \\\ 
                 continue #Caso a abreviação já exista, ele volta para o usuário cadastrar outra.
             if subabreviacao(abrev) == True:
                 return abrev #Retorna a abreviação caso ela não exista no Banco de Dados.
-
 def subabreviacao(abreviacao): #Essa função testa os valores digitados no cadastro de Abreviações
     for linhas in descompactador_equipes(2): #Percorre o Banco de Dados.
         if abreviacao == linhas['abreviacao']: #Verifica se a abreviação já esta cadastrada.
@@ -638,6 +581,7 @@ def menu():
         opcao = input("Digite a opção desejada: ")
         if len(opcao) <= 0 or opcao.isnumeric() == False:
             mensagem = ("Opção Inválida! Tente novamente.")
+            system(clear_function)
             continue
         else:
             opcao = int(opcao)
@@ -656,21 +600,8 @@ def menu():
                 case 3:
                     cadastrojogos()
                 case 4:
-                    if len(descompactador_equipes(1)) == 0:
-                        system(clear_function)
-                        print ("Você precisa adicionar uma equipe primeiro!")
-                        time.sleep(1)
-                        system(clear_function)
-                        continue
-                    else:
-                        janela()
+                    janela()
                 case 5:
-                    if len(descompactador_jogos(1)) == 0:
-                        system(clear_function)
-                        print ("Você precisa adicionar um jogo primeiro!")
-                        time.sleep(1)
-                        system(clear_function)
-                        continue
                     janela_jogos()
                 case 6:
                     janela_grupos()
